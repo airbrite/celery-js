@@ -1,0 +1,30 @@
+{
+  "name": "celery-js",
+  "version": "0.0.0",
+  "description": "Simple library for creating an order with line items and checking out with Celery Cart API",
+  "main": "src/index.js",
+  "scripts": {
+    "serve": "python -m SimpleHTTPServer 8090",
+    "test": "karma start --singleRun=true"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/airbrite/celery-js.git"
+  },
+  "keywords": [
+    "celery",
+    "ecommerce",
+    "preorders",
+    "cart",
+    "shopping",
+    "checkout"
+  ],
+  "author": "Celery, Inc.",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/airbrite/celery-js/issues"
+  },
+  "homepage": "https://github.com/airbrite/celery-js",
+  "devDependencies": {
+  }
+}
