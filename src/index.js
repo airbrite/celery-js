@@ -1,5 +1,5 @@
 // Celery JS Library
-;(function(root) {
+;(function(root, undefined) {
   var Celery = function(options, request) {
     options = options || {};
     this.request = request || (jQuery && jQuery.ajax);
@@ -66,11 +66,11 @@
   //
   // WARNING: This will soon be deprecated in favor of individual calls
   Celery.prototype.serializeOrder = function(order, callback) {
-    return Celery._callOrder('serialize', order, callback);
+    return this._callOrder('serialize', order, callback);
   };
 
   Celery.prototype.createOrder = function(order, callback) {
-    return Celery._callOrder('checkout', order, callback);
+    return this._callOrder('checkout', order, callback);
   };
 
   Celery.prototype._setUserId = function(id) {
@@ -84,7 +84,7 @@
 
     return this.request({
         type: 'POST',
-        url: this.config.apiUrl + '/' + endpoint,
+        url: this.config.apiUrl + '/orders/' + endpoint,
         data: JSON.stringify(order),
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
@@ -115,7 +115,7 @@
 
   // UMD
   if ( typeof define === 'function' && define.amd ) {
-    define([], function() {
+    define(['jquery'], function() {
       return Celery;
     });
   } else if (typeof exports === 'object') {
