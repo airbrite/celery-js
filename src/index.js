@@ -95,7 +95,17 @@
   };
 
   Celery.prototype._createError = function(res) {
-    return new Error(res.responseJSON.meta.error.message);
+    var msg = '';
+
+    if (res && res.responseText) {
+      msg = res.responseText;
+    }
+
+    if (res && res.responseJSON) {
+      msg = res.responseJSON.meta.error.message;
+    }
+
+    return new Error(msg);
   };
 
   Celery.prototype._generateSuccessCb = function(callback) {
@@ -106,9 +116,10 @@
   };
 
   Celery.prototype._generateErrorCb = function(callback) {
+    var self = this;
     return function(jqXHR, textStatus, errorThrown) {
       if (typeof callback !== 'function') return;
-      var err = Celery._createError(jqXHR);
+      var err = self._createError(jqXHR);
       callback(err);
     }
   }
