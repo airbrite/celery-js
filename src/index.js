@@ -28,11 +28,9 @@
     }
 
     var successCb = $.proxy(function(err, data) {
-      if (!data || !data.data) {
-        return false;
+      if (data || data.data) {
+        this._setUserId(data.data.user_id);
       }
-
-      this._setUserId(data.data.user_id);
 
       return callback.apply(this, arguments);
     }, this);
@@ -45,15 +43,35 @@
       .fail(this._generateErrorCb(callback));
   };
 
-  Celery.prototype.fetchTaxes = function(country, state, callback) {
-    console.warn('Implement fetchTaxes');
+
+  // options should be an object with taxes params
+  // shipping_country (required), shipping_state, shipping_zip
+  Celery.prototype.fetchTaxes = function(options, callback) {
+    var userId = this.config.userId;
+
+    if (!userId) {
+      return console.warn('Cannot fetch taxes without a user ID');
+    }
+
+    if (!options || !options.shipping_country) {
+      return console.warn('Must pass at least shipping_country');
+    }
+
+    return this.request({
+        type: 'GET',
+        url: [this.config.apiUrl, 'users', userId, 'tax_rates'].join('/'),
+        data: options,
+        context: this
+      })
+      .done(this._generateSuccessCb(callback))
+      .fail(this._generateErrorCb(callback));
   };
 
-  Celery.prototype.fetchShippingWeights = function(country, state, callback) {
+  Celery.prototype.fetchShippingWeights = function(options, callback) {
     console.warn('Implement fetchShippingWeights');
   };
 
-  Celery.prototype.fetchShippingRates = function(country, state, callback) {
+  Celery.prototype.fetchShippingRates = function(options, callback) {
     console.warn('Implement fetchShippingRates');
   };
 
