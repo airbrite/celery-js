@@ -47,11 +47,7 @@
   // options should be an object with taxes params
   // shipping_country (required), shipping_state, shipping_zip
   Celery.prototype.fetchTaxes = function(options, callback) {
-    var userId = this.config.userId;
-
-    if (!userId) {
-      return console.warn('Cannot fetch taxes without a user ID');
-    }
+    var userId = this._ensureUserId();
 
     if (!options || !options.shipping_country) {
       return console.warn('Must pass at least shipping_country');
@@ -96,6 +92,14 @@
 
     return this;
   };
+
+  Celery.prototype._ensureUserId = function() {
+    if (!this.config.userId) {
+      throw new Error('Cannot fetch taxes without a user ID');
+    }
+
+    return this.config.userId;
+  }
 
   Celery.prototype._callOrder = function(endpoint, order, callback) {
     callback = callback || function() {};
