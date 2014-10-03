@@ -1,5 +1,6 @@
 // Celery JS Library
-;(function(root, undefined) {
+;
+(function(root, undefined) {
   var Celery = function(options, request) {
     options = options || {};
     this.request = request || (jQuery && jQuery.ajax);
@@ -24,8 +25,10 @@
     slug = slug || this.config.slug;
 
     if (!slug) {
-      return console.error('Must pass a product/collection ID to #fetchShop');
+      throw new Error('Must pass a product/collection ID/slug to #fetchShop');
     }
+
+    callback = callback || function() {};
 
     var successCb = $.proxy(function(err, data) {
       if (data || data.data) {
@@ -47,7 +50,7 @@
   // options should be an object with taxes params
   // shipping_country (required), shipping_state, shipping_zip
   Celery.prototype.fetchTaxes = function(options, callback) {
-    var userId = this._ensureUserId();
+    var userId = this._ensureUserId(options);
 
     if (!options || !options.shipping_country) {
       return console.warn('Must pass at least shipping_country');
@@ -71,8 +74,19 @@
     console.warn('Implement fetchShippingRates');
   };
 
-  Celery.prototype.fetchCoupon = function(coupon, callback) {
-    console.warn('Implement fetchCoupon');
+  Celery.prototype.fetchCoupon = function(options, callback) {
+    var userId = this._ensureUserId(options);
+
+    options.userId = userId;
+
+    return this.request({
+        type: 'POST',
+        url: [this.config.apiUrl, 'orders', 'validate_coupon_code'].join('/'),
+        data: options,
+        context: this
+      })
+      .done(this._generateSuccessCb(callback))
+      .fail(this._generateErrorCb(callback));
   };
 
   // Preview an order by sending an order with line item and buyer info
@@ -93,13 +107,19 @@
     return this;
   };
 
-  Celery.prototype._ensureUserId = function() {
-    if (!this.config.userId) {
-      throw new Error('Cannot fetch taxes without a user ID');
+  Celery.prototype._ensureUserId = function(options) {
+    if (!this.config.userId && (!options || !options.userId)) {
+      throw new Error('userId is required');
     }
 
-    return this.config.userId;
-  }
+    var userId = this.config.userId || options.userId;
+
+    if (typeof options === 'object') {
+      options.userId = userId;
+    }
+
+    return userId;
+  };
 
   Celery.prototype._callOrder = function(endpoint, order, callback) {
     callback = callback || function() {};
@@ -147,7 +167,7 @@
   }
 
   // UMD
-  if ( typeof define === 'function' && define.amd ) {
+  if (typeof define === 'function' && define.amd) {
     define(['jquery'], function() {
       return Celery;
     });
