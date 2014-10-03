@@ -10,4 +10,12 @@ celeryClient.fetchShop(null, function(err, data) {
   }, function(err, data) {
     console.log('taxes', data);
   });
+
+  celeryClient.fetchCoupon({
+    // userId: '53a8e161c7efd6d63d088e71',
+    code: '10pct'
+  }, function(err, data) {
+    console.log('coupon', err, data);
+  });
+
 });

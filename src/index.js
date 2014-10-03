@@ -77,16 +77,9 @@
   Celery.prototype.fetchCoupon = function(options, callback) {
     var userId = this._ensureUserId(options);
 
-    options.userId = userId;
+    options.user_id = userId;
 
-    return this.request({
-        type: 'POST',
-        url: [this.config.apiUrl, 'orders', 'validate_coupon_code'].join('/'),
-        data: options,
-        context: this
-      })
-      .done(this._generateSuccessCb(callback))
-      .fail(this._generateErrorCb(callback));
+    return this._post('coupons', 'validate', options, callback);
   };
 
   // Preview an order by sending an order with line item and buyer info
@@ -94,11 +87,11 @@
   //
   // WARNING: This will soon be deprecated in favor of individual calls
   Celery.prototype.serializeOrder = function(order, callback) {
-    return this._callOrder('serialize', order, callback);
+    return this._post('orders', 'serialize', order, callback);
   };
 
   Celery.prototype.createOrder = function(order, callback) {
-    return this._callOrder('checkout', order, callback);
+    return this._post('orders', 'checkout', order, callback);
   };
 
   Celery.prototype._setUserId = function(id) {
@@ -121,20 +114,26 @@
     return userId;
   };
 
-  Celery.prototype._callOrder = function(endpoint, order, callback) {
+  Celery.prototype._post = function(resource, endpoint, data, callback) {
     callback = callback || function() {};
+
+    var url = this.config.apiUrl + '/' + resource;
+
+    if (endpoint) {
+      url += '/' + endpoint;
+    }
 
     return this.request({
         type: 'POST',
-        url: this.config.apiUrl + '/orders/' + endpoint,
-        data: JSON.stringify(order),
+        url: url,
+        data: data ? JSON.stringify(data) : null,
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
         context: this
       })
       .done(this._generateSuccessCb(callback))
       .fail(this._generateErrorCb(callback));
-  };
+  }
 
   Celery.prototype._createError = function(res) {
     var msg = '';
