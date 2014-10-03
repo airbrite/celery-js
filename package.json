@@ -4,8 +4,10 @@
   "description": "Simple library for creating an order with line items and checking out with Celery Cart API",
   "main": "src/index.js",
   "scripts": {
+    "postinstall": "bower install --production --interactive=false",
     "serve": "python -m SimpleHTTPServer 8090",
-    "test": "karma start --singleRun=true"
+    "test": "karma start --singleRun=true",
+    "test-watch": "karma start"
   },
   "repository": {
     "type": "git",
@@ -26,5 +28,15 @@
   },
   "homepage": "https://github.com/airbrite/celery-js",
   "devDependencies": {
+    "chai": "^1.9.2",
+    "karma": "^0.12.24",
+    "karma-chai": "^0.1.0",
+    "karma-cli": "0.0.4",
+    "karma-mocha": "^0.1.9",
+    "karma-mocha-reporter": "^0.3.1",
+    "karma-phantomjs-launcher": "^0.1.4",
+    "karma-sinon": "^1.0.3",
+    "mocha": "^1.21.4",
+    "sinon": "^1.10.3"
   }
 }

@@ -14,5 +14,8 @@
   "moduleType": [
     "amd",
     "globals"
-  ]
+  ],
+  "devDependencies": {
+    "jquery": "~2.1.1"
+  }
 }
