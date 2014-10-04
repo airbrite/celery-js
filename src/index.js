@@ -105,10 +105,10 @@
       throw new Error('userId is required');
     }
 
-    var userId = this.config.userId || options.userId;
+    var userId = this.config.userId || options.userId || options.user_id;
 
     if (typeof options === 'object') {
-      options.userId = userId;
+      options.user_id = userId;
     }
 
     return userId;
